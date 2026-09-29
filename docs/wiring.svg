@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 770" width="1000" height="770" role="img" aria-labelledby="title desc">
+  <title id="title">Wiring: ESP32-32E and three I2C sensors</title>
+  <desc id="desc">The ESP32-32E board powers BME680, CCS811 and ENS160 sensor modules from 3V3 and GND. All three share one I2C bus: SDA on GPIO32 and SCL on GPIO25. The CCS811 nWAKE pin is tied to GND.</desc>
+  <style>
+    .bg { fill: #ffffff; }
+    .card { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
+    .board { fill: #eef6ee; stroke: #2e7d32; stroke-width: 2; }
+    .ink { fill: #1f2328; }
+    .muted { fill: #57606a; }
+    .pinbox { fill: #ffffff; stroke: #57606a; stroke-width: 1.2; }
+    .wire { fill: none; stroke-width: 3.5; stroke-linecap: round; }
+    .v33 { stroke: #d1242f; } .gnd { stroke: #1f2328; } .sda { stroke: #0969da; } .scl { stroke: #bf8700; }
+    .d-v33 { fill: #d1242f; } .d-gnd { fill: #1f2328; } .d-sda { fill: #0969da; } .d-scl { fill: #bf8700; }
+    text { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; }
+    .h1 { font-size: 22px; font-weight: 700; }
+    .h2 { font-size: 19px; font-weight: 700; }
+    .p { font-size: 15px; }
+    .s { font-size: 14px; }
+    .pin { font-size: 13px; font-weight: 600; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0d1117; }
+      .card { fill: #161b22; stroke: #30363d; }
+      .board { fill: #12261a; stroke: #3fb950; }
+      .ink { fill: #e6edf3; }
+      .muted { fill: #9198a1; }
+      .pinbox { fill: #0d1117; stroke: #9198a1; }
+      .v33 { stroke: #ff7b72; } .gnd { stroke: #d0d7de; } .sda { stroke: #58a6ff; } .scl { stroke: #e3b341; }
+      .d-v33 { fill: #ff7b72; } .d-gnd { fill: #d0d7de; } .d-sda { fill: #58a6ff; } .d-scl { fill: #e3b341; }
+    }
+  </style>
+  <rect class="bg" x="0" y="0" width="1000" height="770" rx="16"/>
+  <rect class="card" x="620" y="30" width="350" height="165" rx="12"/>
+  <text class="h2 ink" x="728" y="64">BME680</text>
+  <text class="p ink" x="728" y="86">temperature + humidity</text>
+  <text class="p muted" x="728" y="106">I2C address 0x77</text>
+  <text class="s muted" x="728" y="132">SDO high = 0x77, low = 0x76</text>
+  <line class="wire v33" x1="400" y1="59" x2="620" y2="59"/>
+  <rect class="pinbox" x="620" y="48" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="64" text-anchor="middle">VCC</text>
+  <line class="wire gnd" x1="434" y1="87" x2="620" y2="87"/>
+  <rect class="pinbox" x="620" y="76" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="92" text-anchor="middle">GND</text>
+  <line class="wire sda" x1="468" y1="115" x2="620" y2="115"/>
+  <rect class="pinbox" x="620" y="104" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="120" text-anchor="middle">SDA</text>
+  <line class="wire scl" x1="502" y1="143" x2="620" y2="143"/>
+  <rect class="pinbox" x="620" y="132" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="148" text-anchor="middle">SCL</text>
+  <rect class="card" x="620" y="300" width="350" height="195" rx="12"/>
+  <text class="h2 ink" x="728" y="334">CCS811</text>
+  <text class="p ink" x="728" y="356">eCO2</text>
+  <text class="p muted" x="728" y="376">I2C address 0x5A</text>
+  <text class="s muted" x="728" y="402">ADDR low = 0x5A, high = 0x5B</text>
+  <text class="s muted" x="728" y="430">nWAKE must go to GND,</text>
+  <text class="s muted" x="728" y="448">or the chip ignores I2C.</text>
+  <line class="wire v33" x1="400" y1="329" x2="620" y2="329"/>
+  <rect class="pinbox" x="620" y="318" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="334" text-anchor="middle">VCC</text>
+  <line class="wire gnd" x1="434" y1="357" x2="620" y2="357"/>
+  <rect class="pinbox" x="620" y="346" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="362" text-anchor="middle">GND</text>
+  <line class="wire sda" x1="468" y1="385" x2="620" y2="385"/>
+  <rect class="pinbox" x="620" y="374" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="390" text-anchor="middle">SDA</text>
+  <line class="wire scl" x1="502" y1="413" x2="620" y2="413"/>
+  <rect class="pinbox" x="620" y="402" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="418" text-anchor="middle">SCL</text>
+  <line class="wire gnd" x1="434" y1="469" x2="620" y2="469"/>
+  <rect class="pinbox" x="620" y="458" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="474" text-anchor="middle">nWAKE</text>
+  <rect class="card" x="620" y="520" width="350" height="165" rx="12"/>
+  <text class="h2 ink" x="728" y="554">ENS160</text>
+  <text class="p ink" x="728" y="576">TVOC</text>
+  <text class="p muted" x="728" y="596">I2C address 0x53</text>
+  <text class="s muted" x="728" y="622">ADD high = 0x53, low = 0x52</text>
+  <line class="wire v33" x1="400" y1="549" x2="620" y2="549"/>
+  <rect class="pinbox" x="620" y="538" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="554" text-anchor="middle">VCC</text>
+  <line class="wire gnd" x1="434" y1="577" x2="620" y2="577"/>
+  <rect class="pinbox" x="620" y="566" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="582" text-anchor="middle">GND</text>
+  <line class="wire sda" x1="468" y1="605" x2="620" y2="605"/>
+  <rect class="pinbox" x="620" y="594" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="610" text-anchor="middle">SDA</text>
+  <line class="wire scl" x1="502" y1="633" x2="620" y2="633"/>
+  <rect class="pinbox" x="620" y="622" width="72" height="22" rx="4"/>
+  <text class="pin ink" x="656" y="638" text-anchor="middle">SCL</text>
+  <rect class="board" x="30" y="80" width="250" height="230" rx="12"/>
+  <text class="h1 ink" x="50" y="114">ESP32-32E</text>
+  <text class="s muted" x="50" y="136">sold as "E32R32P"</text>
+  <text class="s muted" x="50" y="156">ESP32-WROOM-32 module</text>
+  <text class="s muted" x="50" y="176">display + touch built in</text>
+  <rect class="pinbox" x="184" y="193" width="96" height="22" rx="4"/>
+  <text class="pin ink" x="232" y="209" text-anchor="middle">3V3</text>
+  <line class="wire v33" x1="280" y1="204" x2="400" y2="204"/>
+  <rect class="pinbox" x="184" y="218" width="96" height="22" rx="4"/>
+  <text class="pin ink" x="232" y="234" text-anchor="middle">GND</text>
+  <line class="wire gnd" x1="280" y1="229" x2="434" y2="229"/>
+  <rect class="pinbox" x="184" y="243" width="96" height="22" rx="4"/>
+  <text class="pin ink mono" x="232" y="259" text-anchor="middle">GPIO32</text>
+  <text class="s muted" x="50" y="259">I2C SDA</text>
+  <line class="wire sda" x1="280" y1="254" x2="468" y2="254"/>
+  <rect class="pinbox" x="184" y="268" width="96" height="22" rx="4"/>
+  <text class="pin ink mono" x="232" y="284" text-anchor="middle">GPIO25</text>
+  <text class="s muted" x="50" y="284">I2C SCL</text>
+  <line class="wire scl" x1="280" y1="279" x2="502" y2="279"/>
+  <line class="wire v33" x1="400" y1="44" x2="400" y2="549"/>
+  <text class="pin ink" x="400" y="34" text-anchor="middle">3V3</text>
+  <line class="wire gnd" x1="434" y1="44" x2="434" y2="577"/>
+  <text class="pin ink" x="434" y="34" text-anchor="middle">GND</text>
+  <line class="wire sda" x1="468" y1="44" x2="468" y2="605"/>
+  <text class="pin ink" x="468" y="34" text-anchor="middle">SDA</text>
+  <line class="wire scl" x1="502" y1="44" x2="502" y2="633"/>
+  <text class="pin ink" x="502" y="34" text-anchor="middle">SCL</text>
+  <circle class="d-v33" cx="400" cy="59" r="6"/>
+  <circle class="d-v33" cx="400" cy="329" r="6"/>
+  <circle class="d-v33" cx="400" cy="549" r="6"/>
+  <circle class="d-v33" cx="400" cy="204" r="6"/>
+  <circle class="d-gnd" cx="434" cy="87" r="6"/>
+  <circle class="d-gnd" cx="434" cy="357" r="6"/>
+  <circle class="d-gnd" cx="434" cy="469" r="6"/>
+  <circle class="d-gnd" cx="434" cy="577" r="6"/>
+  <circle class="d-gnd" cx="434" cy="229" r="6"/>
+  <circle class="d-sda" cx="468" cy="115" r="6"/>
+  <circle class="d-sda" cx="468" cy="385" r="6"/>
+  <circle class="d-sda" cx="468" cy="605" r="6"/>
+  <circle class="d-sda" cx="468" cy="254" r="6"/>
+  <circle class="d-scl" cx="502" cy="143" r="6"/>
+  <circle class="d-scl" cx="502" cy="413" r="6"/>
+  <circle class="d-scl" cx="502" cy="633" r="6"/>
+  <circle class="d-scl" cx="502" cy="279" r="6"/>
+  <text class="p muted" x="30" y="722">A dot marks a connection. Wires that cross without a dot are not connected.</text>
+  <text class="p muted" x="30" y="746">Pin names vary between modules (VCC/VIN/3V3, ADDR/ADD/SDO): check yours, and that they run on 3.3 V.</text>
+</svg>

@@ -1,0 +1,15 @@
+# ESP-IDF build output
+firmware/build/
+# Downloaded by the IDF Component Manager (LVGL); pinned in dependencies.lock
+firmware/managed_components/
+# Generated from sdkconfig.defaults on first build; change settings in sdkconfig.defaults
+firmware/sdkconfig
+firmware/sdkconfig.old
+
+# Editors / OS
+.vscode/
+.idea/
+.cache/
+.clangd
+*.swp
+.DS_Store
