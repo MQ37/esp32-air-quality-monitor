@@ -39,6 +39,8 @@ I'm a software person, and the hardware side was the hard part for me. If you're
 | **eCO2** (ppm) | CCS811 | Excellent (< 600) · Good (600–800) · Fair (800–1000) · Poor (1000–1500) · Very Poor (≥ 1500) |
 | **TVOC** (ppb) | ENS160 | Excellent (< 100) · Good (100–200) · Fair (200–400) · Poor (400–600) · Very Poor (≥ 600) |
 
+**Four values, three sensor modules.** The BME680 module gives temperature and humidity, the CCS811 module gives eCO2 and the ENS160 module gives TVOC. The ENS160 board is a two-in-one: it also carries an AHT21 temperature and humidity chip, which the firmware doesn't read. The bill of materials below lists exactly what I bought.
+
 The sensors are read every 5 seconds, and each card shows the average of the last 5 readings (about 25 seconds). The label thresholds are rough rules of thumb I picked, not an official standard. They live in [`ui_air_quality.c`](firmware/main/ui_air_quality.c) if you want different ones.
 
 Before you trust the numbers:
@@ -48,22 +50,22 @@ Before you trust the numbers:
 - **Temperature reads high.** The ESP32 and the display backlight heat up the inside of the box, and the case has almost no airflow, so the temperature card shows noticeably more than the real room temperature (my photos show about 29 °C). The BME680's gas heater is switched off in the firmware so it doesn't add to this (see [`bme680_driver.c`](firmware/main/bme680_driver.c)). Treat the temperature as approximate. A better enclosure would fix most of it, see [the enclosure section](#the-enclosure).
 - **Compensation.** Every reading, the BME680's temperature and humidity are passed to the CCS811 and ENS160 so they can correct their gas readings.
 
-**Why three sensors?** I read that when one of these sensors is also used for temperature, its other readings get worse. So instead of working around that, I bought more sensors and gave each one a single job.
+**Why so many sensors?** Several of them overlap: the CCS811 and the ENS160 both report eCO2 and TVOC, and both the BME680 and the AHT21 measure temperature and humidity. I read that when a gas sensor is also used for temperature, its other readings get worse. So instead of working around that, I bought more sensors and gave each one a single job: the firmware takes temperature and humidity from the BME680, eCO2 from the CCS811 and TVOC from the ENS160.
 
 ## Bill of materials
 
 | Part | Qty | Notes |
 | --- | --- | --- |
 | ESP32-32E 3.2" display board ("E32R32P") | 1 | ESP32-WROOM-32, 240x320 ST7789P3 IPS display, XPT2046 resistive touch. [The AliExpress listing I bought from](https://www.aliexpress.com/item/1005008239809369.html). |
-| BME680 breakout module | 1 | Bosch temperature / humidity / pressure / gas sensor. I2C address 0x77. |
-| CCS811 breakout module | 1 | eCO2 / TVOC sensor. I2C address 0x5A. |
-| ENS160 breakout module | 1 | ScioSense TVOC / eCO2 sensor. I2C address 0x53. |
+| BME680 module (sold as "CJMCU-680") | 1 | Bosch temperature / humidity / pressure / gas sensor. Used for temperature and humidity. I2C address 0x77. |
+| CCS811 air-quality module | 1 | eCO2 / TVOC sensor. Used for eCO2. I2C address 0x5A. |
+| ENS160 + AHT21 module | 1 | One board with two chips: the ScioSense ENS160 air-quality sensor (used for TVOC, I2C address 0x53) and an AHT21 temperature and humidity sensor (not used by the firmware, usually at address 0x38). |
 | M2.5 self-tapping screws | 4 | Hold the board on the enclosure standoffs. |
 | USB-C cable + 5 V USB power supply | 1 | For power, and for flashing from your computer. |
 | Wire | – | Four wires per sensor, plus one for the CCS811's nWAKE pin. I soldered mine. |
 | PLA filament | ~67 g | For the [enclosure](enclosure/). |
 
-Sensor breakouts come from many sellers and differ in pin names and address jumpers, so check the notes below against your modules.
+That is three sensor modules and four sensor chips. Sensor breakouts come from many sellers and differ in pin names and address jumpers, so check the notes below against your modules.
 
 ## How it's wired
 
@@ -71,7 +73,7 @@ The display and touch screen are built into the board. The only wiring is the th
 
 ![Wiring diagram: ESP32-32E to BME680, CCS811 and ENS160 on one I2C bus](docs/wiring.svg)
 
-| ESP32-32E | BME680 | CCS811 | ENS160 |
+| ESP32-32E | BME680 | CCS811 | ENS160 (+ AHT21) |
 | --- | --- | --- | --- |
 | 3V3 | VCC | VCC | VCC |
 | GND | GND | GND **and nWAKE** | GND |
@@ -80,7 +82,7 @@ The display and touch screen are built into the board. The only wiring is the th
 
 - **I2C** is a two-wire bus (SDA = data, SCL = clock) that several chips can share. Each chip has its own address, so they don't clash.
 - **CCS811 nWAKE → GND.** The CCS811 only answers on I2C while nWAKE is low, so tie it to ground.
-- **Addresses.** The firmware expects BME680 `0x77`, CCS811 `0x5A` and ENS160 `0x53`. On boot it scans the bus and logs every address it finds, which is the quickest way to check your wiring. If a module shows up at its other address (BME680 `0x76`, CCS811 `0x5B`, ENS160 `0x52`), change the address constant at the top of its driver in [`firmware/main/`](firmware/main/), or change the address pin on the module.
+- **Addresses.** The firmware expects BME680 `0x77`, CCS811 `0x5A` and ENS160 `0x53`. On boot it scans the bus and logs every address it finds, which is the quickest way to check your wiring. The scan will also list the AHT21 on the ENS160 board (usually `0x38`); the firmware ignores it. If a module shows up at its other address (BME680 `0x76`, CCS811 `0x5B`, ENS160 `0x52`), change the address constant at the top of its driver in [`firmware/main/`](firmware/main/), or change the address pin on the module.
 - **Pull-ups.** I2C needs pull-up resistors on SDA and SCL. The firmware turns on the ESP32's internal ones, and most breakout modules have their own.
 - **Check your module.** Pin labels vary (VCC/VIN/3V3, ADD/ADDR/SDO), and so does whether a module runs on 3.3 V. Where 3V3, GND, GPIO32 and GPIO25 come out on the board depends on its connectors, so check the seller's pinout.
 
@@ -192,7 +194,7 @@ Most of these cost me time. The display ones are already fixed in this repo; the
 
 Everything runs in one loop in `app_main`, with no tasks of its own:
 
-1. **Start-up** ([`main.c`](firmware/main/main.c)): switch on the backlight, init NVS, start the I2C bus and scan it, and init the three sensors. Then init LVGL and the display ([`lvgl_port.c`](firmware/main/lvgl_port.c)) and draw the four cards ([`ui_air_quality.c`](firmware/main/ui_air_quality.c)).
+1. **Start-up** ([`main.c`](firmware/main/main.c)): switch on the backlight, init NVS, start the I2C bus and scan it, and init the three sensor modules. Then init LVGL and the display ([`lvgl_port.c`](firmware/main/lvgl_port.c)) and draw the four cards ([`ui_air_quality.c`](firmware/main/ui_air_quality.c)).
 2. **Every 10 ms:** `lv_timer_handler()` lets LVGL redraw. A 10 ms `esp_timer` drives LVGL's clock.
 3. **Every 5 s:** trigger a BME680 measurement and read temperature and humidity, pass both to the CCS811 and ENS160 for compensation, then read TVOC from the ENS160 and eCO2 from the CCS811. Each value goes into a 5-slot ring buffer, and the cards show the averages. A gas value of 0 means "no data yet": it's left out of the average, and the card shows "Warming" until a real reading arrives.
 

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 770" width="1000" height="770" role="img" aria-labelledby="title desc">
   <title id="title">Wiring: ESP32-32E and three I2C sensors</title>
-  <desc id="desc">The ESP32-32E board powers BME680, CCS811 and ENS160 sensor modules from 3V3 and GND. All three share one I2C bus: SDA on GPIO32 and SCL on GPIO25. The CCS811 nWAKE pin is tied to GND.</desc>
+  <desc id="desc">The ESP32-32E board powers BME680, CCS811 and ENS160 sensor modules (the ENS160 board also carries an unused AHT21) from 3V3 and GND. All three share one I2C bus: SDA on GPIO32 and SCL on GPIO25. The CCS811 nWAKE pin is tied to GND.</desc>
   <style>
     .bg { fill: #ffffff; }
     .card { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1.5; }
@@ -74,6 +74,8 @@
   <text class="p ink" x="728" y="576">TVOC</text>
   <text class="p muted" x="728" y="596">I2C address 0x53</text>
   <text class="s muted" x="728" y="622">ADD high = 0x53, low = 0x52</text>
+  <text class="s muted" x="728" y="648">Board also has an AHT21 (0x38),</text>
+  <text class="s muted" x="728" y="668">not used by the firmware.</text>
   <line class="wire v33" x1="400" y1="549" x2="620" y2="549"/>
   <rect class="pinbox" x="620" y="538" width="72" height="22" rx="4"/>
   <text class="pin ink" x="656" y="554" text-anchor="middle">VCC</text>
